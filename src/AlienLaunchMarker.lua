@@ -26,31 +26,41 @@ function AlienLaunchMarker:init(world)
     self.launched = false
     self.canSplit = false
 
-    -- our alien we will eventually spawn
+    -- our aliens that we will eventually spawn
     self.aliens = {}
 end
 
 function AlienLaunchMarker:update(dt)
+    -- if we can split and space bar was clicked add 2 more player-aliens to game
     if self.canSplit and love.keyboard.wasPressed('space') then
+        -- disable splitting (so we can only split once per launch)
         self.canSplit = false
+
+        -- Get velocity, and position for original player-alien
         Vx, Vy = self.aliens[1].body:getLinearVelocity()
         posX, posY = self.aliens[1].body:getPosition()
 
+        -- create two player-aliens (a and b) passing in position of original-alien
         a = Alien(self.world, 'round', posX, posY, 'Player')
         b = Alien(self.world, 'round', posX, posY, 'Player')
 
+        -- Adjust velocity for both by adding and subtracting 40 percent from Y-velocity
         a.body:setLinearVelocity(Vx, Vy - Vy * 0.4)
         b.body:setLinearVelocity(Vx, Vy + Vy * 0.4)
 
+        -- make the a-alien pretty bouncy
         a.fixture:setRestitution(0.5)
         a.body:setAngularDamping(1)
 
+        -- make the b-alien pretty bouncy
         b.fixture:setRestitution(0.5)
         b.body:setAngularDamping(1)
 
+        -- Add to negative -1 group for no collision between player-aliens
         a.fixture:setGroupIndex(-1)
         b.fixture:setGroupIndex(-1)
 
+        -- Add both aliens to aliens table
         table.insert(self.aliens, a)
         table.insert(self.aliens, b)
     end
@@ -79,7 +89,11 @@ function AlienLaunchMarker:update(dt)
             -- make the alien pretty bouncy
             original_alien.fixture:setRestitution(0.4)
             original_alien.body:setAngularDamping(1)
+
+            -- Add to negative -1 group for no collision between player-aliens
             original_alien.fixture:setGroupIndex(-1)
+            
+            -- add aliens table
             table.insert(self.aliens, original_alien)
 
             -- we're no longer aiming
