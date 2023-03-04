@@ -27,6 +27,7 @@ function Level:init()
 
         -- if we collided between both the player and an obstacle...
         if types['Obstacle'] and types['Player'] then
+            self.launchMarker.canSplit = false
 
             -- grab the body that belongs to the player
             local playerFixture = a:getUserData() == 'Player' and a or b
@@ -170,22 +171,22 @@ function Level:update(dt)
         end
     end
 
-    -- replace launch marker if original alien stopped moving
-    if self.launchMarker.launched then
-        local xPos, yPos = self.launchMarker.alien.body:getPosition()
-        local xVel, yVel = self.launchMarker.alien.body:getLinearVelocity()
+    -- replace launch marker if all aliens have stopped moving
+    -- if self.launchMarker.launched then
+    --     local xPos, yPos = self.launchMarker.alien.body:getPosition()
+    --     local xVel, yVel = self.launchMarker.alien.body:getLinearVelocity()
         
-        -- if we fired our alien to the left or it's almost done rolling, respawn
-        if xPos < 0 or (math.abs(xVel) + math.abs(yVel) < 1.5) then
-            self.launchMarker.alien.body:destroy()
-            self.launchMarker = AlienLaunchMarker(self.world)
+    --     -- if we fired our alien to the left or it's almost done rolling, respawn
+    --     if xPos < 0 or (math.abs(xVel) + math.abs(yVel) < 1.5) then
+    --         self.launchMarker.alien.body:destroy()
+    --         self.launchMarker = AlienLaunchMarker(self.world)
 
-            -- re-initialize level if we have no more aliens
-            if #self.aliens == 0 then
-                gStateMachine:change('start')
-            end
-        end
-    end
+    --         -- re-initialize level if we have no more aliens
+    --         if #self.aliens == 0 then
+    --             gStateMachine:change('start')
+    --         end
+    --     end
+    -- end
 end
 
 function Level:render()
